@@ -1,41 +1,38 @@
 package com.rubahapi.moviedb
 
-import android.support.v7.app.AppCompatActivity
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.support.v7.app.AppCompatActivity
 import com.rubahapi.moviedb.adapters.MovieAdapter
 import com.rubahapi.moviedb.models.Movie
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    @SuppressLint("Recycle")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val movieData = arrayOf(
-            "A Star", "Aquaman",
-            "Avenger Infinity War", "Birdbox",
-            "Bohemian", "Bumblebee",
-            "Creed", "Deadpool",
-            "Dragon", "Dragonball",
-            "Glass", "Hunterkiller",
-            "Marry Popins")
+        val dataName = resources.getStringArray(R.array.movie_name)
+        val dataDescription = resources.getStringArray(R.array.movie_description)
+        val dataImage = resources.obtainTypedArray(R.array.image_photo)
+
 
         val movieObjData = arrayListOf<Movie>()
-        movieObjData.add(Movie("Naruto", "shippudden"))
-        movieObjData.add(Movie("Naruto1", "shippudden"))
-        movieObjData.add(Movie("Naruto2", "shippudden"))
+        for (i in 0 until dataName.size-1){
+            movieObjData.add(Movie(dataName[i], dataDescription[i], dataImage.getResourceId(i, -1)))
+        }
 
         val adapter = MovieAdapter(this, movieObjData)
-//        val adapter = ArrayAdapter(this, android.R.layout.list_item, android.R.id.text1, movieData)
         list_movie.adapter = adapter
 
         list_movie.setOnItemClickListener{
             _, _, position, _ ->
-            Toast.makeText(applicationContext, position.toString(), Toast.LENGTH_LONG).show()
+            val intent = Intent(this, DetailMovieActivity::class.java)
+            intent.putExtra(DetailMovieActivity.EXTRA_DETAIL_MOVIE, movieObjData[position])
+            startActivity(intent)
         }
     }
 }

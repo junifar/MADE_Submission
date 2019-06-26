@@ -1,49 +1,50 @@
 package com.rubahapi.moviedb.adapters
 
 import android.content.Context
+import android.content.res.Resources
+import android.content.res.TypedArray
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.rubahapi.moviedb.R
 import com.rubahapi.moviedb.models.Movie
 import org.w3c.dom.Text
+import java.net.URI
 
 class MovieAdapter(context: Context, private val movies:ArrayList<Movie>): BaseAdapter() {
 
     private val inflater:LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-    private class MovieViewHolder{
-        internal var name: TextView? = null
-        internal var description: TextView? = null
+    private class MovieViewHolder(view: View){
+        internal var name: TextView = view.findViewById(R.id.listview_item_title)
+        internal var description: TextView = view.findViewById(R.id.listview_item_short_description)
+        internal var image_logo: ImageView = view.findViewById(R.id.image_logo)
+
+        fun bind(movie: Movie){
+            name.text = movie.name
+            description.text = movie.description
+            image_logo.setImageResource(movie.image_uri)
+        }
     }
 
     override fun getView(i: Int, view: View?, parent: ViewGroup): View {
-
         val viewLocal:View
-        val holder:MovieViewHolder
 
         if (view == null) {
             viewLocal = inflater.inflate(R.layout.list_item_image_two_lines, parent, false)
-
-            holder = MovieViewHolder()
-            holder.name = viewLocal.findViewById(R.id.listview_item_title) as TextView
-            holder.description = viewLocal.findViewById(R.id.listview_item_short_description) as TextView
-            viewLocal.tag = holder
         }else{
             viewLocal = view
-            holder = viewLocal.tag as MovieViewHolder
         }
 
-        val name        = holder.name
-        val description = holder.description
-
+        val holder = MovieViewHolder(viewLocal)
         val movie = getItem(i) as Movie
-
-        name?.text  = movie.name
-        description?.text = movie.description
-
+        holder.bind(movie)
         return viewLocal
     }
 
